@@ -8,8 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 public class MainActivityViewModel extends AndroidViewModel {
-    private double dolarAEuro = 0.85;
-    private double euroADolar = 1.17;
+    private Conversion conversion;
     private MutableLiveData<Boolean> mOperacionDolarAEuro;
     private MutableLiveData<Boolean> mOperacionEuroADolar;
     private MutableLiveData<Double> mResultadoConversion;
@@ -17,6 +16,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
     }
+
 
     public LiveData<Boolean> getMOperacionDolarAEuro() {
         if (mOperacionDolarAEuro == null) {
@@ -48,29 +48,30 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     public void setMTipoConversion(int idRadioButton) {
         if (idRadioButton == R.id.rbDolaresAEuros) {
+            conversion = Conversion.DOLAR_A_EURO;
             mOperacionDolarAEuro.setValue(true);
             mOperacionEuroADolar.setValue(false);
         } else {
+            conversion =conversion.EURO_A_DOLAR;
             mOperacionEuroADolar.setValue(true);
             mOperacionDolarAEuro.setValue(false);
         }
     }
 
     public void convertir(String valorDolares, String valorEuros) {
-        try{
-            if (getMOperacionDolarAEuro().getValue()){
+        try {
+            if (conversion == Conversion.DOLAR_A_EURO) {
                 double valor = Double.parseDouble(valorDolares);
-                mResultadoConversion.setValue(valor * dolarAEuro);
-            } else if (getMOperacionEuroADolar().getValue()) {
+                mResultadoConversion.setValue(valor * conversion.getTasa());
+            } else if (conversion == Conversion.EURO_A_DOLAR) {
                 double valor = Double.parseDouble(valorEuros);
-                mResultadoConversion.setValue(valor * euroADolar);
+                mResultadoConversion.setValue(valor * conversion.getTasa());
             } else {
                 throw new Exception();
             }
-        }catch (NumberFormatException e){
-            // Se supone que jamás va a entrar acá porque el EditText está deshabilitado y el inputType es numberDecimal
+        } catch (NumberFormatException e) {
             mMensajeError.setValue("Ingrese un valor numérico válido.");
-        } catch (Exception e){
+        } catch (Exception e) {
             mMensajeError.setValue("Seleccione un tipo de conversión");
         }
     }
