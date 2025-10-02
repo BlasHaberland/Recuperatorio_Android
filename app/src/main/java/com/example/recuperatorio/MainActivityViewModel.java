@@ -62,10 +62,12 @@ public class MainActivityViewModel extends AndroidViewModel {
         try {
             if (conversion == Conversion.DOLAR_A_EURO) {
                 double valor = Double.parseDouble(valorDolares);
-                mResultadoConversion.setValue(valor * conversion.getTasa());
+                double resultado = valor * conversion.getTasa();
+                mResultadoConversion.setValue(Math.round(resultado * 100.0) / 100.0);
             } else if (conversion == Conversion.EURO_A_DOLAR) {
                 double valor = Double.parseDouble(valorEuros);
-                mResultadoConversion.setValue(valor * conversion.getTasa());
+                double resultado = valor * conversion.getTasa();
+                mResultadoConversion.setValue(Math.round(resultado * 100.0) / 100.0);
             } else {
                 throw new Exception();
             }
